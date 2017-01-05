@@ -13,17 +13,26 @@ metadata:
     tags: maven,artifactory,instant-app
   
 parameters:
-- description: Artifactory Service Name
+- description: The name of the OpenShift Service exposed for the Artifactory container
+  displayName: Artifactory Service Name
   name: ARTIFACTORY_SERVICE
   value: artifactory
   required: true
 
-- description: Persistent Volume Claim Capacity
+- description: Volume space available for data, e.g. 512Mi, 2Gi.
+  displayName: Persistent Volume Claim Capacity
   name: VOLUME_CAPACITY
   value: 2Gi
   required: true
   
-- description: Artifactory Image
+- description: Service Account with AnyUID SCC assigned. Will be created if it doesn't exist
+  displayName: Artifactory Service Account
+  name: ARTIFACTORY_SERVICE_ACCOUNT
+  value: artifactory-sa
+  required: true
+  
+- description: Image on which to base the Artifactory Image Stream
+  displayName: Artifactory Image
   name: ARTIFACTORY_IMAGE
   value: docker.bintray.io/jfrog/artifactory-oss:latest
   required: true
@@ -32,7 +41,7 @@ objects:
 - apiVersion: v1
   kind: ServiceAccount
   metadata:
-    name: ${ARTIFACTORY_SERVICE}-sa
+    name: ${ARTIFACTORY_SERVICE_ACCOUNT}
 
 - apiVersion: v1
   kind: PersistentVolumeClaim
@@ -88,8 +97,8 @@ objects:
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         securityContext: {}
-        serviceAccount: ${ARTIFACTORY_SERVICE}-sa
-        serviceAccountName: ${ARTIFACTORY_SERVICE}-sa
+        serviceAccount: ${ARTIFACTORY_SERVICE_ACCOUNT}
+        serviceAccountName: ${ARTIFACTORY_SERVICE_ACCOUNT}
         terminationGracePeriodSeconds: 30
         volumes:
         - name: ${ARTIFACTORY_SERVICE}-volume
