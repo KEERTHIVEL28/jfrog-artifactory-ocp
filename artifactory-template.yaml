@@ -46,7 +46,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: ${ARTIFACTORY_SERVICE}-pvc
+    name: ${ARTIFACTORY_SERVICE}
   spec:
     accessModes:
     - ReadWriteOnce
@@ -57,7 +57,7 @@ objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    name: ${ARTIFACTORY_SERVICE}-dc
+    name: ${ARTIFACTORY_SERVICE}
   spec:
     replicas: 1
     selector:
@@ -81,7 +81,7 @@ objects:
         containers:
         - image: 
           imagePullPolicy: IfNotPresent
-          name: ${ARTIFACTORY_SERVICE}-container
+          name: ${ARTIFACTORY_SERVICE}
           ports:
           - containerPort: 8081
             protocol: TCP
@@ -89,7 +89,7 @@ objects:
           terminationMessagePath: /dev/termination-log
           volumeMounts:
           - mountPath: /var/opt/jfrog/artifactory/data
-            name: ${ARTIFACTORY_SERVICE}-volume
+            name: ${ARTIFACTORY_SERVICE}
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         securityContext: {}
@@ -97,16 +97,16 @@ objects:
         serviceAccountName: ${ARTIFACTORY_SERVICE_ACCOUNT}
         terminationGracePeriodSeconds: 30
         volumes:
-        - name: ${ARTIFACTORY_SERVICE}-volume
+        - name: ${ARTIFACTORY_SERVICE}
           persistentVolumeClaim:
-            claimName: ${ARTIFACTORY_SERVICE}-pvc
+            claimName: ${ARTIFACTORY_SERVICE}
     test: false
     triggers:
     - type: ConfigChange
     - imageChangeParams:
         automatic: true
         containerNames:
-        - ${ARTIFACTORY_SERVICE}-container
+        - ${ARTIFACTORY_SERVICE}
         from:
           kind: ImageStreamTag
           name: ${ARTIFACTORY_SERVICE}:latest
@@ -132,16 +132,16 @@ objects:
 - apiVersion: v1
   kind: Route
   metadata:
-    name: ${ARTIFACTORY_SERVICE}-route
+    name: ${ARTIFACTORY_SERVICE}
   spec:
     to:
       kind: Service
-      name: ${ARTIFACTORY_SERVICE}-svc
+      name: ${ARTIFACTORY_SERVICE}
 
 - apiVersion: v1
   kind: Service
   metadata:
-    name: ${ARTIFACTORY_SERVICE}-svc
+    name: ${ARTIFACTORY_SERVICE}
   spec:
     ports:
     - name: 8081-tcp
@@ -149,7 +149,7 @@ objects:
       protocol: TCP
       targetPort: 8081
     selector:
-      deploymentconfig: ${ARTIFACTORY_SERVICE}-dc
+      deploymentconfig: ${ARTIFACTORY_SERVICE}
     sessionAffinity: None
     type: ClusterIP
   status:
