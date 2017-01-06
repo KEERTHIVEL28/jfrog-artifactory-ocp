@@ -47,8 +47,6 @@ objects:
   kind: PersistentVolumeClaim
   metadata:
     name: ${ARTIFACTORY_SERVICE}-pvc
-    labels: 
-      template: ${ARTIFACTORY_SERVICE}
   spec:
     accessModes:
     - ReadWriteOnce
@@ -59,13 +57,11 @@ objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    labels:
-      app: ${ARTIFACTORY_SERVICE}
     name: ${ARTIFACTORY_SERVICE}-dc
   spec:
     replicas: 1
     selector:
-      app: ${ARTIFACTORY_SERVICE}
+      name: ${ARTIFACTORY_SERVICE}
     strategy:
       resources: {}
       rollingParams:
@@ -80,7 +76,7 @@ objects:
         annotations:
         creationTimestamp: null
         labels:
-          app: ${ARTIFACTORY_SERVICE}
+          name: ${ARTIFACTORY_SERVICE}
       spec:
         containers:
         - image: 
@@ -136,8 +132,6 @@ objects:
 - apiVersion: v1
   kind: Route
   metadata:
-    labels:
-      app: ${ARTIFACTORY_SERVICE}
     name: ${ARTIFACTORY_SERVICE}-route
   spec:
     to:
@@ -147,8 +141,6 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
-    labels:
-      app: ${ARTIFACTORY_SERVICE}
     name: ${ARTIFACTORY_SERVICE}-svc
   spec:
     ports:
